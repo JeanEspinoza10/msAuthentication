@@ -22,18 +22,23 @@ public class CreateUserUseCase {
     public Mono<CreateUserResponse> execute(UserModel userModel) {
 
         return Mono.just(userModel)
-                .flatMap(UserValidations::validateMandatoryFields)
-                .flatMap(UserValidations::validateBaseSalary)
-                .flatMap(UserValidations::validateEmailFormat)
+                .map(u -> {
+                    UserValidations.validateMandatoryFields(u);
+                    UserValidations.validateBaseSalary(u);
+                    UserValidations.validateEmailFormat(u);
+                    return u;
+                })
                 .flatMap(u ->
                         userRepository.findByEmail(u.getEmail())
                                 .hasElement()
                                 .flatMap(exists -> Boolean.TRUE.equals(exists)
                                         ? Mono.error(DomainException.duplicateEmail())
-                                        : UserValidations.withDefaultRoleIfNull(u)
+                                        : Mono.just(UserValidations.withDefaultRoleIfNull(u))
                                 )
                 )
                 .flatMap(userRepository::save)
-                .map(saved->CreateUserResponse.success(saved.getId()));
+                .map(saved->CreateUserResponse.success());
+
     }
+
 }

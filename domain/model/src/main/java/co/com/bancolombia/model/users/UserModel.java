@@ -9,6 +9,7 @@ import lombok.Setter;
 
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 @Getter
@@ -25,5 +26,6 @@ public class UserModel {
     private String phone;
     private BigDecimal baseSalary;
     private Long rolId;
-
+    private LocalDate birthDate;
+    private String address;
 }

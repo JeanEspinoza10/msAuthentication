@@ -12,6 +12,6 @@ public interface UserBodyMapper {
     UserBodyMapper INSTANCE = Mappers.getMapper(UserBodyMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "rolId", ignore = true)
+
     UserModel toModel(UserBody userBody);
 }

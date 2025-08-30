@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 @Getter
@@ -36,6 +37,12 @@ public class UserEntity {
 
     @Column("base_salary")
     private BigDecimal baseSalary;
+
+    @Column("birth_date")
+    private LocalDate birthDate;
+
+    @Column("address")
+    private String address;
 
     @Column("rol_id")
     private Long rolId;

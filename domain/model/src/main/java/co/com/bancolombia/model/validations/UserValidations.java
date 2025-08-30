@@ -1,79 +1,48 @@
 package co.com.bancolombia.model.validations;
 
+
 import co.com.bancolombia.model.config.CreateUserConfig;
 import co.com.bancolombia.model.exception.DomainException;
 import co.com.bancolombia.model.users.UserModel;
-import reactor.core.publisher.Mono;
+
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 public class UserValidations {
 
     private UserValidations() {}
 
-    public static Mono<UserModel> validateMandatoryFields(UserModel user) {
-        return Mono.defer(() -> {
-            Map<String, Object> fields = new HashMap<>();
-            fields.put("name", user.getName());
-            fields.put("lastName", user.getLastName());
-            fields.put("email", user.getEmail());
-            fields.put("baseSalary", user.getBaseSalary());
-
-            for (Map.Entry<String, Object> entry : fields.entrySet()) {
-                Object value = entry.getValue();
-
-                if (value == null) {
-                    return Mono.error(DomainException.emptyField(entry.getKey()));
-                }
-
-                if (value instanceof String s && s.isBlank()) {
-                    return Mono.error(DomainException.emptyField(entry.getKey()));
-                }
-            }
-
-            return Mono.just(user);
-        });
+    public static void validateMandatoryFields(UserModel user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            throw DomainException.emptyField("name");
+        }
+        if (user.getLastName() == null || user.getLastName().isBlank()) {
+            throw DomainException.emptyField("lastName");
+        }
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw DomainException.emptyField("email");
+        }
+        if (user.getBaseSalary() == null) {
+            throw DomainException.emptyField("baseSalary");
+        }
     }
 
-    public static Mono<UserModel> validateBaseSalary(UserModel user) {
-        return Mono.defer(() -> {
-            if (user.getBaseSalary() == null) {
-                return Mono.error(DomainException.invalidBaseSalaryFormat());
-            }
-            try {
-                BigDecimal salary = user.getBaseSalary();
-                if (salary.compareTo(BigDecimal.ZERO) < 0 ||
-                        salary.compareTo(new BigDecimal("15000000")) > 0) {
-                    return Mono.error(DomainException.invalidBaseSalaryMount());
-                }
-            } catch (NumberFormatException e) {
-                return Mono.error(DomainException.invalidBaseSalaryFormat());
-            }
-            return Mono.just(user);
-        });
+    public static void validateBaseSalary(UserModel user) {
+        BigDecimal salary = user.getBaseSalary();
+        if (salary.compareTo(BigDecimal.ZERO) < 0 ||
+                salary.compareTo(new BigDecimal("15000000")) > 0) {
+            throw DomainException.invalidBaseSalaryMount();
+        }
     }
 
-    public static Mono<UserModel> validateEmailFormat(UserModel user) {
-        return Mono.defer(() -> {
-            String emailRegex = "^[\\w.-]+@bancolombia\\.com$";
-            Pattern pattern = Pattern.compile(emailRegex);
-            if (!pattern.matcher(user.getEmail()).matches()) {
-                return Mono.error(DomainException.invalidEmail());
-            }
-            return Mono.just(user);
-        });
+    public static void validateEmailFormat(UserModel user) {
+        String emailRegex = "^[\\w.-]+@bancolombia\\.com$";
+        if (!user.getEmail().matches(emailRegex)) {
+            throw DomainException.invalidEmail();
+        }
     }
-
-    public static Mono<UserModel> withDefaultRoleIfNull(UserModel user) {
-        return Mono.just(
-                user.getRolId() == null
-                        ? user.toBuilder()
-                        .rolId(CreateUserConfig.DEFAULT_ROLE_ID)
-                        .build()
-                        : user
-        );
+    public static UserModel withDefaultRoleIfNull(UserModel user) {
+        return user.getRolId() == null
+                ? user.toBuilder().rolId(3L).build()
+                : user;
     }
 }

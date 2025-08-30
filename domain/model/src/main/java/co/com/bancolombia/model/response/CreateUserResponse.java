@@ -9,11 +9,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CreateUserResponse {
-    private String message;
-    private Long id;
 
-    public static CreateUserResponse success(Long id) {
-        return new CreateUserResponse(Messages.CREATE_USER_OK, id);
+    private Boolean success;
+    private String message;
+
+    public static CreateUserResponse success() {
+        return new CreateUserResponse(Boolean.TRUE,Messages.CREATE_USER_OK );
     }
 
+    public static CreateUserResponse error(String message){
+        return new CreateUserResponse(Boolean.FALSE,message );
+    }
 }
