@@ -1,22 +1,17 @@
 package co.com.bancolombia.api.mapper;
 
 import co.com.bancolombia.api.request.UserBody;
-import co.com.bancolombia.model.command.CreateUserCommand;
+import co.com.bancolombia.model.users.UserModel;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-public class UserBodyMapper {
-    private UserBodyMapper() {}
+@Mapper(componentModel = "spring")
+public interface UserBodyMapper {
 
-    public static CreateUserCommand toRequest(UserBody userBody) {
-        if (userBody == null) {
-            return null;
-        }
-        return CreateUserCommand.builder()
-                .name(userBody.getName())
-                .lastName(userBody.getLastName())
-                .email(userBody.getEmail())
-                .documentIdentity(userBody.getDocumentIdentity())
-                .phone(userBody.getPhone())
-                .baseSalary(userBody.getBaseSalary())
-                .build();
-    }
+    UserBodyMapper INSTANCE = Mappers.getMapper(UserBodyMapper.class);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "rolId", ignore = true)
+    UserModel toModel(UserBody userBody);
 }

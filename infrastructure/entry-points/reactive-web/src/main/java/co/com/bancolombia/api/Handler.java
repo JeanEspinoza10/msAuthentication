@@ -12,16 +12,18 @@ import reactor.core.publisher.Mono;
 public class Handler {
 
     private final CreateUserUseCase createUserUseCase;
+    private final UserBodyMapper userBodyMapper;
 
-    public Handler(CreateUserUseCase createUserUseCase) {
+    public Handler(CreateUserUseCase createUserUseCase, UserBodyMapper userBodyMapper) {
         this.createUserUseCase = createUserUseCase;
+        this.userBodyMapper = userBodyMapper;
     }
 
     public Mono<ServerResponse> createUser(ServerRequest serverRequest) {
 
         return serverRequest.bodyToMono(UserBody.class)
-                .switchIfEmpty(Mono.error(new RuntimeException("Request body is empty or invalid")))
-                .flatMap(userBody -> createUserUseCase.execute(UserBodyMapper.toRequest(userBody)))
-                .flatMap(res -> ServerResponse.ok().bodyValue(res.getId()));
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Request body is empty or invalid")))
+                .flatMap(userBody -> createUserUseCase.execute(userBodyMapper.toModel(userBody)))
+                .flatMap(res -> ServerResponse.ok().bodyValue(res));
     }
 }

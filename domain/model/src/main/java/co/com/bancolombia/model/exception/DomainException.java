@@ -1,25 +1,30 @@
 package co.com.bancolombia.model.exception;
 
 
+import co.com.bancolombia.model.config.Messages;
+
 public class DomainException extends RuntimeException {
     public DomainException(String message) {
         super(message);
     }
 
     public static DomainException emptyField(String fieldName) {
-        return new DomainException("The field '" + fieldName + "' cannot be empty");
+        return new DomainException(Messages.EMPTY_FIELD);
     }
 
     public static DomainException invalidEmail(){
-        return new DomainException("Email format invalid");
+        return new DomainException(Messages.INVALID_USER_EMAIL);
     }
+
     public static DomainException invalidBaseSalaryMount() {
-        return new DomainException("The field 'baseSalary' must be between 0 and 15,000,000");
+        return new DomainException(Messages.INVALID_BASE_SALARY_MOUNT);
     }
+
     public static DomainException invalidBaseSalaryFormat() {
-        return new DomainException("The field 'baseSalary' must be a valid number");
+        return new DomainException(Messages.INVALID_BASE_SALARY_FORMAT);
     }
+
     public static DomainException duplicateEmail(){
-       return new DomainException("Can't create with Email");
+       return new DomainException(Messages.DUPLICATE_USER_EMAIL);
     }
 }
