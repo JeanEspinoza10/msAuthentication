@@ -40,5 +40,4 @@ public class CreateUserUseCase {
                 .map(saved->CreateUserResponse.success());
 
     }
-
 }

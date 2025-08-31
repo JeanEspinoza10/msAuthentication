@@ -7,4 +7,5 @@ public interface UserRepository {
     Mono<UserModel> findById (Long id);
     Mono<UserModel> save (UserModel user);
     Mono<UserModel> findByEmail(String email);
+    Mono<UserModel> findByDocumentIdentity(String documentIdentity);
 }

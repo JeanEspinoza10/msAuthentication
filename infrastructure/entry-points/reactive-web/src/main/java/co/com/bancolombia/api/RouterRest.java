@@ -52,6 +52,7 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(Handler handler,  GlobalRouterErrorHandler globalRouterErrorHandler) {
         return route()
                 .POST("/api/v1/users", handler::createUser)
+                .GET("/api/v1/users/validate/{documentIdentity}", handler::validateUser)
                 .filter(globalRouterErrorHandler.errorHandler())
                 .build();
     }

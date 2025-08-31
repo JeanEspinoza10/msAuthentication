@@ -38,10 +38,18 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
+    public Mono<UserModel> findByDocumentIdentity(String documentIdentity) {
+        return repository
+                .findByDocumentIdentity(documentIdentity)
+                .map(entity -> mapper.map(entity, UserModel.class));
+    }
+
+    @Override
     public Mono<UserModel> save(UserModel model) {
         return txOperator.transactional(
                 repository.save(mapper.map(model, UserEntity.class))
                         .map(entity -> mapper.map(entity, UserModel.class))
         );
     }
+
 }

@@ -4,6 +4,7 @@ import co.com.bancolombia.api.mapper.UserBodyMapper;
 import co.com.bancolombia.api.request.UserBody;
 import co.com.bancolombia.api.utils.RequestLogger;
 import co.com.bancolombia.usecase.createuser.CreateUserUseCase;
+import co.com.bancolombia.usecase.validateuser.ValidateUserUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,10 +22,12 @@ public class Handler {
 
     private final CreateUserUseCase createUserUseCase;
     private final UserBodyMapper userBodyMapper;
+    private final ValidateUserUseCase validateUserUseCase;
 
-    public Handler(CreateUserUseCase createUserUseCase, UserBodyMapper userBodyMapper) {
+    public Handler(CreateUserUseCase createUserUseCase, UserBodyMapper userBodyMapper, ValidateUserUseCase validateUserUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.userBodyMapper = userBodyMapper;
+        this.validateUserUseCase = validateUserUseCase;
     }
 
     public Mono<ServerResponse> createUser(ServerRequest serverRequest) {
@@ -36,5 +39,12 @@ public class Handler {
                     RequestLogger.logResponse("CreateUser", HttpStatus.OK);
                     return ServerResponse.ok().bodyValue(res);
                 });
+    }
+
+    public Mono<ServerResponse> validateUser(ServerRequest request) {
+        RequestLogger.logRequest(request, "ValidateUser");
+        String documentIdentity = request.pathVariable("documentIdentity");
+        return validateUserUseCase.execute(documentIdentity)
+                .flatMap(response -> ServerResponse.ok().bodyValue(response));
     }
 }
