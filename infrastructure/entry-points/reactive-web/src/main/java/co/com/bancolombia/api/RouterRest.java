@@ -10,6 +10,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 @Configuration
 public class RouterRest {
+
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler,  GlobalRouterErrorHandler globalRouterErrorHandler) {
         return route()
